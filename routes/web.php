@@ -2,6 +2,15 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ParkingSpaceController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ParkingStatusController;
+use App\Http\Controllers\QRCodeController;
+
+Route::resource('parking-spaces', ParkingSpaceController::class);
+Route::resource('bookings', BookingController::class);
+Route::resource('parking-statuses', ParkingStatusController::class);
+Route::resource('qr-codes', QRCodeController::class);
 
 Route::get('/', function () {
     return view('welcome');
