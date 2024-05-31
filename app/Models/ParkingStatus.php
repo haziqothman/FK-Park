@@ -1,12 +1,18 @@
-<?php 
+<?php
+
+// app/Models/ParkingStatus.php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ParkingStatus extends Model
 {
-    use HasFactory;
+    protected $fillable = ['status', 'date', 'is_available', 'parking_space_id'];
 
-    protected $fillable = ['status', 'date', 'is_available'];
+    // Define the inverse relationship with ParkingSpace
+    public function parkingSpace()
+    {
+        return $this->belongsTo(ParkingSpace::class);
+    }
 }

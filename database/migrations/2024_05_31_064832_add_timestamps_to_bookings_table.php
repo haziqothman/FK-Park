@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddLocationAndAreaToParkingSpacesTable extends Migration
+class AddTimestampsToBookingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class AddLocationAndAreaToParkingSpacesTable extends Migration
      */
     public function up()
     {
-        Schema::table('parking_spaces', function (Blueprint $table) {
-            $table->string('location');
-            $table->string('area');
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->timestamps();
         });
     }
 
@@ -26,9 +25,8 @@ class AddLocationAndAreaToParkingSpacesTable extends Migration
      */
     public function down()
     {
-        Schema::table('parking_spaces', function (Blueprint $table) {
-            $table->dropColumn('location');
-            $table->dropColumn('area');
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->dropTimestamps();
         });
     }
 }

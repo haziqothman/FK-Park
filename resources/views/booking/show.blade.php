@@ -1,38 +1,34 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Booking Details') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="container">
-    <h1>Booking Details</h1>
-    <table class="table">
-        <tr>
-            <th>ID</th>
-            <td>{{ $booking->id }}</td>
-        </tr>
-        <tr>
-            <th>User</th>
-            <td>{{ $booking->user->name }}</td>
-        </tr>
-        <tr>
-            <th>Vehicle</th>
-            <td>{{ $booking->vehicle->plate_number }}</td>
-        </tr>
-        <tr>
-            <th>Parking Space</th>
-            <td>{{ $booking->parkingSpace->location }}</td>
-        </tr>
-        <tr>
-            <th>Start Time</th>
-            <td>{{ $booking->start_time }}</td>
-        </tr>
-        <tr>
-            <th>End Time</th>
-            <td>{{ $booking->end_time }}</td>
-        </tr>
-        <tr>
-            <th>Status</th>
-            <td>{{ $booking->booking_status }}</td>
-        </tr>
-    </table>
-    <a href="{{ route('bookings.index') }}" class="btn btn-secondary">Back</a>
-</div>
-@endsection
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <h3>Booking ID: {{ $booking->id }}</h3>
+                    <p>Vehicle: {{ $booking->vehicle->plate_number }}</p>
+                    <p>Parking Space: {{ $booking->parking_space->number }}</p>
+                    <p>Start Time: {{ $booking->start_time }}</p>
+                    <p>End Time: {{ $booking->end_time }}</p>
+                    <p>Status: {{ $booking->booking_status }}</p>
+                    @if($booking->qr_code)
+                        <img src="{{ asset($booking->qr_code) }}" alt="QR Code">
+                    @endif
+                    <div class="mt-4">
+                        <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-warning">Edit</a>
+                        <form action="{{ route('bookings.destroy', $booking->id) }}" method="POST" style="display: inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                        <a href="{{ route('bookings.index') }}" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

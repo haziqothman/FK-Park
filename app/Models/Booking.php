@@ -8,5 +8,28 @@ class Booking extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'vehicle_id', 'parking_space_id', 'start_time', 'end_time', 'booking_status'];
+    protected $table = 'bookings';
+
+    protected $primaryKey = 'bookingID';
+
+    public $timestamps = true; // This should be true if you're using timestamps
+
+    protected $fillable = [
+        'userID',
+        'vehicleID',
+        'spaceID',
+        'startTime',
+        'endTime',
+        'bookingStatus',
+    ];
+
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class, 'vehicleID');
+    }
+
+    public function parkingSpace()
+    {
+        return $this->belongsTo(ParkingSpace::class, 'spaceID');
+    }
 }

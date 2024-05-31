@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,5 +9,16 @@ class Vehicle extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['plate_number', 'vehicle_type', 'model', 'color'];
+    // Define any necessary relationships, fillable properties, etc.
+    protected $fillable = [
+        'user_id',
+        'plate_number',
+        // Other columns...
+    ];
+
+    // Define relationships
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

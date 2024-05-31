@@ -1,4 +1,6 @@
 <?php
+// app/Models/ParkingSpace.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,5 +10,10 @@ class ParkingSpace extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['location', 'status_id'];
+    protected $fillable = [
+        'location',
+        'area',
+    ];
 }
+
+

@@ -2,110 +2,100 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Booking;
-use App\Models\User;
 use App\Models\Vehicle;
 use App\Models\ParkingSpace;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class BookingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $bookings = Booking::all();
-        return view('bookings.index', compact('bookings'));
+        // Fetch the bookings for the authenticated user
+        $bookings = Booking::with('vehicle', 'parkingSpace')
+                            ->where('userID', auth()->id())
+                            ->get();
+
+        // Return the view with the bookings
+        return view('booking.index', compact('bookings'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $users = User::all(); // Assuming you have a User model
-    
-        // Other code to fetch vehicles and parkingSpaces if needed
-    
-        return view('create', compact('users'));
+        $vehicles = Vehicle::where('user_id', Auth::id())->get();
+        $parkingSpaces = ParkingSpace::all();
+
+        return view('booking.create', compact('vehicles', 'parkingSpaces'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
             'vehicle_id' => 'required|exists:vehicles,id',
             'parking_space_id' => 'required|exists:parking_spaces,id',
             'start_time' => 'required|date',
-            'end_time' => 'required|date',
-            'booking_status' => 'required|string|max:255',
+            'end_time' => 'required|date|after:start_time',
         ]);
+        
+        // Create a new booking
+        Booking::create([
+            'userID' => auth()->id(),
+            'vehicleID' => $request->input('vehicle_id'),
+            'spaceID' => $request->input('parking_space_id'),
+            'startTime' => $request->input('start_time'),
+            'endTime' => $request->input('end_time'),
+            'bookingStatus' => 'pending', // Default status, change if needed
+        ]);
+    
+        // Redirect to the index page with a success message
+        return redirect()->route('bookings.index')->with('success', 'Booking created successfully.');
+    }
+    
 
-        Booking::create($request->all());
-
-        return redirect()->route('bookings.index')
-                         ->with('success', 'Booking created successfully.');
+    public function show($id)
+    {
+        $booking = Booking::findOrFail($id);
+        return view('booking.show', compact('booking'));
     }
 
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Booking $booking)
+    public function edit($id)
     {
-        return view('bookings.show', compact('booking'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Booking $booking)
-    {
-        $users = User::all();
-        $vehicles = Vehicle::all();
+        $booking = Booking::findOrFail($id);
+        $vehicles = Vehicle::where('user_id', Auth::id())->get();
         $parkingSpaces = ParkingSpace::all();
-        return view('bookings.edit', compact('booking', 'users', 'vehicles', 'parkingSpaces'));
+
+        return view('booking.edit', compact('booking', 'vehicles', 'parkingSpaces'));
     }
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Booking $booking)
+
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
             'vehicle_id' => 'required|exists:vehicles,id',
             'parking_space_id' => 'required|exists:parking_spaces,id',
             'start_time' => 'required|date',
-            'end_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
             'booking_status' => 'required|string|max:255',
         ]);
 
-        $booking->update($request->all());
+        $booking = Booking::findOrFail($id);
+        $booking->update([
+            'vehicle_id' => $request->vehicle_id,
+            'parking_space_id' => $request->parking_space_id,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'booking_status' => $request->booking_status,
+        ]);
 
-        return redirect()->route('bookings.index')
-                         ->with('success', 'Booking updated successfully.');
+        return redirect()->route('bookings.index')->with('success', 'Booking updated successfully.');
     }
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Booking $booking)
+
+    public function destroy($id)
     {
+        $booking = Booking::findOrFail($id);
         $booking->delete();
 
-        return redirect()->route('bookings.index')
-                         ->with('success', 'Booking deleted successfully.');
+        return redirect()->route('bookings.index')->with('success', 'Booking deleted successfully.');
     }
-    public function showBookingPage()
-{
-    // Retrieve users from the database or any other source
-    $users = User::all(); // Assuming you have a User model
-
-    // Pass the $users variable to the view
-    return view('booking', ['users' => $users]);
-}
 }

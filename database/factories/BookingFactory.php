@@ -1,29 +1,27 @@
 <?php
 
-namespace Database\Factories;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use App\Models\Booking;
-use App\Models\User;
-use App\Models\Vehicle;
-use App\Models\ParkingSpace;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Booking>
- */
-class BookingFactory extends Factory
+class CreateBookingsTable extends Migration
 {
-    protected $model = Booking::class;
-
-    public function definition()
+    public function up()
     {
-        return [
-            'user_id' => User::factory(),
-            'vehicle_id' => Vehicle::factory(),
-            'parking_space_id' => ParkingSpace::factory(),
-            'start_time' => $this->faker->dateTime,
-            'end_time' => $this->faker->dateTime,
-            'booking_status' => $this->faker->randomElement(['booked', 'cancelled', 'completed']),
-        ];
+        Schema::create('booking', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('vehicle_id')->constrained()->onDelete('cascade');
+            $table->foreignId('parking_space_id')->constrained()->onDelete('cascade');
+            $table->timestamp('start_time');
+            $table->timestamp('end_time');
+            $table->string('booking_status');
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('bookings');
     }
 }

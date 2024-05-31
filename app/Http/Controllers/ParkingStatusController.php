@@ -21,7 +21,7 @@ class ParkingStatusController extends Controller
      */
     public function create()
     {
-        return view('parking_statuses.create');
+        return view('parkingSpace.create');
     }
 
     /**
