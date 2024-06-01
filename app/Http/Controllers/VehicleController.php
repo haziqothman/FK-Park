@@ -14,6 +14,7 @@ class VehicleController extends Controller
     public function index()
     {
         $vehicles = Vehicle::all(); // Retrieve all vehicles from the database
+        \Log::info('test');
         return view('vehicle.index', ['vehicles' => $vehicles]); // Pass the vehicles data to the view
     }
 
@@ -35,7 +36,7 @@ class VehicleController extends Controller
      */
     public function store(Request $request)
     {
-        \Log::info('Store method called');
+        \Log::info('Store~method called');
         
         // Validate the incoming request data
         $validatedData = $request->validate([

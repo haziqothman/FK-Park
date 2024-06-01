@@ -7,6 +7,7 @@ use App\Models\Vehicle;
 use App\Models\ParkingSpace;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class BookingController extends Controller
@@ -17,7 +18,6 @@ class BookingController extends Controller
         $bookings = Booking::with('vehicle', 'parkingSpace')
                             ->where('userID', auth()->id())
                             ->get();
-
         // Return the view with the bookings
         return view('booking.index', compact('bookings'));
     }
@@ -38,21 +38,35 @@ class BookingController extends Controller
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
         ]);
-        
-        // Create a new booking
-        Booking::create([
-            'userID' => auth()->id(),
-            'vehicleID' => $request->input('vehicle_id'),
-            'spaceID' => $request->input('parking_space_id'),
-            'startTime' => $request->input('start_time'),
-            'endTime' => $request->input('end_time'),
-            'bookingStatus' => 'pending', // Default status, change if needed
+    
+        // Check for overlapping bookings
+        $existingBookings = Booking::where('spaceID', $request->input('spaceID'))
+                                    ->where(function($query) use ($request) {
+                                        $query->where('endTime', '>', $request->input('start_time'))
+                                              ->where('startTime', '<', $request->input('end_time'));
+                                    })
+                                    ->get();
+    
+        if($existingBookings->isNotEmpty()) {
+            // Notify the user about the clash
+            return redirect()->route('bookings.create')->with('error', 'Booking clash detected for the selected parking space. Please choose a different time slot.');
+        }
+    
+        // Store booking details in session
+        session([
+            'booking_details' => [
+                'userID' => auth()->id(),
+                'vehicleID' => $request->input('vehicle_id'),
+                'spaceID' => $request->input('parking_space_id'),
+                'startTime' => $request->input('start_time'),
+                'endTime' => $request->input('end_time'),
+                'bookingStatus' => 'pending', // Default status, change if needed
+            ]
         ]);
     
-        // Redirect to the index page with a success message
-        return redirect()->route('bookings.index')->with('success', 'Booking created successfully.');
+        // Redirect to the confirmation page
+        return redirect()->route('bookings.confirm');
     }
-    
 
     public function show($id)
     {
@@ -61,35 +75,36 @@ class BookingController extends Controller
     }
 
     public function edit($id)
-    {
-        $booking = Booking::findOrFail($id);
-        $vehicles = Vehicle::where('user_id', Auth::id())->get();
-        $parkingSpaces = ParkingSpace::all();
+{
+    $booking = Booking::findOrFail($id);
+    $vehicles = Vehicle::all();
+    $parkingSpaces = ParkingSpace::all();
+   
+    return view('booking.edit', compact('booking', 'vehicles', 'parkingSpaces'));
+}
 
-        return view('booking.edit', compact('booking', 'vehicles', 'parkingSpaces'));
-    }
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'vehicleID' => 'required|exists:vehicles,id',
+        'spaceID' => 'required|exists:parking_spaces,id',
+        'startTime' => 'required|date',
+        'endTime' => 'required|date|after:startTime',
+        'bookingStatus' => 'required|string|max:255',
+    ]);
 
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'parking_space_id' => 'required|exists:parking_spaces,id',
-            'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time',
-            'booking_status' => 'required|string|max:255',
-        ]);
+    $booking = Booking::findOrFail($id);
+    $booking->update([
+        'userID' => auth()->id(),
+        'vehicleID' => $request->input('vehicleID'),
+        'spaceID' => $request->input('spaceID'),
+        'startTime' => $request->input('startTime'),
+        'endTime' => $request->input('endTime'),
+        'bookingStatus' => $request->input('bookingStatus'),
+    ]);
 
-        $booking = Booking::findOrFail($id);
-        $booking->update([
-            'vehicle_id' => $request->vehicle_id,
-            'parking_space_id' => $request->parking_space_id,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'booking_status' => $request->booking_status,
-        ]);
-
-        return redirect()->route('bookings.index')->with('success', 'Booking updated successfully.');
-    }
+    return redirect()->route('bookings.index')->with('success', 'Booking updated successfully.');
+}
 
     public function destroy($id)
     {
@@ -97,5 +112,34 @@ class BookingController extends Controller
         $booking->delete();
 
         return redirect()->route('bookings.index')->with('success', 'Booking deleted successfully.');
+    }
+
+    public function confirm()
+    {
+        $bookingDetails = session('booking_details');
+        
+        if (!$bookingDetails) {
+            return redirect()->route('bookings.create')->with('error', 'No booking details found.');
+        }
+
+        return view('booking.confirm', compact('bookingDetails'));
+    }
+
+    public function finalize(Request $request)
+    {
+        $bookingDetails = session('booking_details');
+
+        if (!$bookingDetails) {
+            return redirect()->route('bookings.create')->with('error', 'No booking details found.');
+        }
+
+        // Create a new booking
+        Booking::create($bookingDetails);
+
+        // Clear the session
+        session()->forget('booking_details');
+
+        // Redirect to the index page with a success message
+        return redirect()->route('bookings.index')->with('success', 'Booking created successfully.');
     }
 }

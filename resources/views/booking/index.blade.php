@@ -25,6 +25,9 @@
                                 <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-900 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     End Time
                                 </th>
+                                <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-900 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Booking status
+                                </th>
                                 <th scope="col" class="relative px-6 py-3 bg-gray-50 dark:bg-gray-900">
                                     <span class="sr-only">Actions</span>
                                 </th>
@@ -33,17 +36,17 @@
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach ($bookings as $booking)
                             <tr>
-                                <td>{{ $booking->vehicle->plate_number }}</td>
-                                <td>{{ $booking->parkingSpace->location }} ({{ $booking->parkingSpace->area }})</td>
-                                <td>{{ $booking->startTime }}</td>
-                                <td>{{ $booking->endTime }}</td>
-                                <td>
-                                    <a href="{{ route('bookings.show', $booking->bookingID) }}" class="btn btn-info">View</a>
-                                    <a href="{{ route('bookings.edit', $booking->bookingID) }}" class="btn btn-warning">Edit</a>
-                                    <form action="{{ route('bookings.destroy', $booking->bookingID) }}" method="POST" style="display: inline-block;">
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $booking->vehicle->plate_number }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $booking->parkingSpace->location }} ({{ $booking->parkingSpace->area }})</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $booking->startTime }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $booking->endTime }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $booking->bookingStatus }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a href="{{ route('bookings.edit', $booking->bookingID) }}" class="text-blue-500 hover:text-blue-700" style="color: blue;">Edit</a>
+                                    <form action="{{ route('bookings.destroy', $booking->bookingID) }}" method="POST" class="inline-block ml-2">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                        <button type="submit" class="text-red-500 hover:text-red-700"  style="color:red;">Delete</button>
                                     </form>
                                 </td>
                             </tr>

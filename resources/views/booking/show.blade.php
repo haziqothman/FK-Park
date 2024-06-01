@@ -10,8 +10,8 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <h3>Booking ID: {{ $booking->id }}</h3>
-                    <p>Vehicle: {{ $booking->vehicle->plate_number }}</p>
-                    <p>Parking Space: {{ $booking->parking_space->number }}</p>
+                    <p>Vehicle: {{ $booking->vehicle->plate_number ?? 'N/A' }}</p>
+                    <p>Parking Space: {{ $booking->parkingSpace->number ?? 'N/A' }}</p>
                     <p>Start Time: {{ $booking->start_time }}</p>
                     <p>End Time: {{ $booking->end_time }}</p>
                     <p>Status: {{ $booking->booking_status }}</p>
@@ -19,8 +19,8 @@
                         <img src="{{ asset($booking->qr_code) }}" alt="QR Code">
                     @endif
                     <div class="mt-4">
-                        <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-warning">Edit</a>
-                        <form action="{{ route('bookings.destroy', $booking->id) }}" method="POST" style="display: inline-block;">
+                        <a href="{{ route('bookings.edit', ['booking' => $booking->id]) }}" class="btn btn-warning">Edit</a>
+                        <form action="{{ route('bookings.destroy', ['booking' => $booking->id]) }}" method="POST" style="display: inline-block;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Delete</button>
