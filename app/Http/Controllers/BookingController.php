@@ -60,7 +60,7 @@ class BookingController extends Controller
                 'spaceID' => $request->input('parking_space_id'),
                 'startTime' => $request->input('start_time'),
                 'endTime' => $request->input('end_time'),
-                'bookingStatus' => 'pending', // Default status, change if needed
+                'bookingStatus' => 'successfull', // Default status, change if needed
             ]
         ]);
     
@@ -68,11 +68,16 @@ class BookingController extends Controller
         return redirect()->route('bookings.confirm');
     }
 
-    public function show($id)
-    {
-        $booking = Booking::findOrFail($id);
-        return view('booking.show', compact('booking'));
-    }
+    public function show($booking)
+{
+    $booking = Booking::with('vehicle', 'parkingSpace')->findOrFail($booking);
+
+    $qrCode = QrCode::size(200)->generate(route('bookings.show', $booking));
+
+    return view('booking.show', compact('booking', 'qrCode'));
+}
+
+    
 
     public function edit($id)
 {
@@ -133,13 +138,10 @@ public function update(Request $request, $id)
             return redirect()->route('bookings.create')->with('error', 'No booking details found.');
         }
 
-        // Create a new booking
-        Booking::create($bookingDetails);
-
-        // Clear the session
+        $booking = Booking::create($bookingDetails);
+        $qrCode = QrCode::size(200)->generate(route('bookings.show', $booking->bookingID));
         session()->forget('booking_details');
 
-        // Redirect to the index page with a success message
-        return redirect()->route('bookings.index')->with('success', 'Booking created successfully.');
+        return view('booking.complete', compact('qrCode', 'booking'));
     }
 }

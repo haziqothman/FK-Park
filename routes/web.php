@@ -22,7 +22,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
     Route::get('/bookings/{booking}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
     Route::get('/confirm', [BookingController::class, 'confirm'])->name('bookings.confirm');
-    Route::post('/bookings/finalize', [BookingController::class, 'finalize'])->name('bookings.finalize');   
+    Route::post('/bookings/finalize', [BookingController::class, 'finalize'])->name('bookings.finalize');
+    Route::get('/bookings/{booking}/show', [BookingController::class, 'show'])->name('bookings.show');
+
+   
     
 
 

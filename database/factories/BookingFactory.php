@@ -16,6 +16,7 @@ class CreateBookingsTable extends Migration
             $table->timestamp('start_time');
             $table->timestamp('end_time');
             $table->string('booking_status');
+            $table->string('remark');
             $table->timestamps();
         });
     }

@@ -42,11 +42,12 @@
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $booking->endTime }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $booking->bookingStatus }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href="{{ route('bookings.edit', $booking->bookingID) }}" class="text-blue-500 hover:text-blue-700" style="color: blue;">Edit</a>
-                                    <form action="{{ route('bookings.destroy', $booking->bookingID) }}" method="POST" class="inline-block ml-2">
+                                    <a href="{{ route('bookings.show', $booking) }}" class="text-indigo-600 hover:text-indigo-900">View More</a>
+                                    <a href="{{ route('bookings.edit', $booking) }}" class="text-blue-600 hover:text-blue-700 ml-2"style="color: blue;">Edit</a>
+                                    <form action="{{ route('bookings.destroy', $booking) }}" method="POST" class="inline-block ml-2">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-500 hover:text-red-700"  style="color:red;">Delete</button>
+                                        <button type="submit" class="text-red-500 hover:text-red-700" style="color: red;">Delete</button>
                                     </form>
                                 </td>
                             </tr>
