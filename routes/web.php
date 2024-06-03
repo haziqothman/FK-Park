@@ -6,6 +6,7 @@ use App\Http\Controllers\ParkingSpaceController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ParkingStatusController;
 use App\Http\Controllers\QRCodeController;
+use App\Http\Controllers\HomeController;
 
 Route::resource('parking-spaces', ParkingSpaceController::class);
 Route::resource('bookings', BookingController::class);
@@ -36,3 +37,6 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+route::get('admin.dashboard', [HomeController::class,'index']);
