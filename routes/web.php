@@ -35,7 +35,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/vehicles/{id}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
     Route::put('/vehicles/{id}', [VehicleController::class, 'update'])->name('vehicles.update');
     Route::delete('/vehicles/{id}', [VehicleController::class, 'destroy'])->name('vehicles.destroy');
-
     Route::get('/parking-spaces', [ParkingSpaceController::class, 'index'])->name('parking-spaces.index');
 });
 

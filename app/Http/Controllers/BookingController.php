@@ -39,15 +39,23 @@ class BookingController extends Controller
             'end_time' => 'required|date|after:start_time',
         ]);
     
-        // Check for overlapping bookings
-        $existingBookings = Booking::where('spaceID', $request->input('spaceID'))
-                                    ->where(function($query) use ($request) {
-                                        $query->where('endTime', '>', $request->input('start_time'))
-                                              ->where('startTime', '<', $request->input('end_time'));
-                                    })
-                                    ->get();
+        $startTime = Carbon::parse($request->input('start_time'));
+        $endTime = Carbon::parse($request->input('end_time'));
     
-        if($existingBookings->isNotEmpty()) {
+        // Check for overlapping bookings
+        $existingBookings = Booking::where('spaceID', $request->input('parking_space_id'))
+                                    ->where(function($query) use ($startTime, $endTime) {
+                                        $query->where(function($query) use ($startTime, $endTime) {
+                                            $query->whereBetween('startTime', [$startTime, $endTime])
+                                                  ->orWhereBetween('endTime', [$startTime, $endTime]);
+                                        })->orWhere(function($query) use ($startTime, $endTime) {
+                                            $query->where('startTime', '<=', $startTime)
+                                                  ->where('endTime', '>=', $endTime);
+                                        });
+                                    })
+                                    ->exists();
+    
+        if ($existingBookings) {
             // Notify the user about the clash
             return redirect()->route('bookings.create')->with('error', 'Booking clash detected for the selected parking space. Please choose a different time slot.');
         }
@@ -58,15 +66,16 @@ class BookingController extends Controller
                 'userID' => auth()->id(),
                 'vehicleID' => $request->input('vehicle_id'),
                 'spaceID' => $request->input('parking_space_id'),
-                'startTime' => $request->input('start_time'),
-                'endTime' => $request->input('end_time'),
-                'bookingStatus' => 'successfull', // Default status, change if needed
+                'startTime' => $startTime,
+                'endTime' => $endTime,
+                'bookingStatus' => 'successful', // Default status, change if needed
             ]
         ]);
     
         // Redirect to the confirmation page
         return redirect()->route('bookings.confirm');
     }
+    
 
     public function show($booking)
 {
@@ -77,9 +86,7 @@ class BookingController extends Controller
     return view('booking.show', compact('booking', 'qrCode'));
 }
 
-    
-
-    public function edit($id)
+public function edit($id)
 {
     $booking = Booking::findOrFail($id);
     $vehicles = Vehicle::all();
@@ -106,6 +113,7 @@ public function update(Request $request, $id)
         'startTime' => $request->input('startTime'),
         'endTime' => $request->input('endTime'),
         'bookingStatus' => $request->input('bookingStatus'),
+        
     ]);
 
     return redirect()->route('bookings.index')->with('success', 'Booking updated successfully.');
@@ -144,4 +152,25 @@ public function update(Request $request, $id)
 
         return view('booking.complete', compact('qrCode', 'booking'));
     }
+
+//     public function availableParkingSpaces(Request $request)
+// {
+//     $request->validate([
+//         'start_time' => 'required|date',
+//         'end_time' => 'required|date|after:start_time',
+//     ]);
+
+//     $startTime = Carbon::parse($request->input('start_time'));
+//     $endTime = Carbon::parse($request->input('end_time'));
+
+//     $availableSpaces = ParkingSpace::whereDoesntHave('bookings', function($query) use ($startTime, $endTime) {
+//         $query->where(function($query) use ($startTime, $endTime) {
+//             $query->where('endTime', '>', $startTime)
+//                   ->where('startTime', '<', $endTime);
+//         });
+//     })->get();
+
+//     return response()->json($availableSpaces);
+//     }
+
 }

@@ -10,13 +10,12 @@ class CreateBookingsTable extends Migration
     {
         Schema::create('booking', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('vehicle_id')->constrained()->onDelete('cascade');
-            $table->foreignId('parking_space_id')->constrained()->onDelete('cascade');
-            $table->timestamp('start_time');
-            $table->timestamp('end_time');
-            $table->string('booking_status');
-            $table->string('remark');
+            $table->foreignId('userID')->constrained()->onDelete('cascade');
+            $table->foreignId('vehicleID')->constrained()->onDelete('cascade');
+            $table->foreignId('spaceID')->constrained()->onDelete('cascade');
+            $table->timestamp('startTime');
+            $table->timestamp('endTime');
+            $table->string('bookingStatus');
             $table->timestamps();
         });
     }
