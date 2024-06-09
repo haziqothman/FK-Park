@@ -2,21 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ManageUsers;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Symfony\Contracts\Service\Attribute\Required;
 use Illuminate\Support\Facades\Hash; //import this for password hashing
 
 class UserController extends Controller
 {
     //here create all crud logic
-    public function loadAllUsers(){
-        $all_users = ManageUsers::all();
-        return view('admin/usermanage',compact('all_users'));
+    public function list(){
+        dd('test');
+        $getRecord= User::getRecord();
+        return view('admin.usermanage', compact('getRecord'));
     }
 
-    public function loadAddUserForm(){
+    public function add(){
         return view('admin/add-user');
+    }
+
+    public function insert(Request $request){
+        $request->validate([
+            'name'=> 'required|string',
+            'email'=> 'required|email|unique:users',
+            'password'=> 'required|min:8',
+            'userType'=>'required|string'
+        ]);
+        try {
+             // register user here
+            $user = new User;
+            $user->name = trim($request->name);
+            $user->email = trim($request->email);
+            $user->userType = trim($request->userType);
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            return redirect('admin.usermanage')->with('success','User Added Successfully');
+        } catch (\Exception $e) {
+            return redirect('admin.add-user')->with('fail',$e->getMessage());
+        }
     }
 
     public function AddUser(Request $request){
@@ -28,7 +50,7 @@ class UserController extends Controller
         ]);
         try {
              // register user here
-            $new_user = new ManageUsers();
+            $new_user = new User();
             $new_user->name = $request->name;
             $new_user->email = $request->email;
             $new_user->userType = $request->userType;
@@ -50,7 +72,7 @@ class UserController extends Controller
         ]);
         try {
              // update user here
-            $update_user = ManageUsers::where('id',$request->id)->update([
+            $update_user = User::where('id',$request->id)->update([
                 'name' => $request->name,
                 'email' => $request->email,
                 'userType' => $request->userType,
@@ -63,14 +85,14 @@ class UserController extends Controller
     }
 
     public function loadEditForm($id){
-        $user = ManageUsers::find($id);
+        $user = User::find($id);
 
         return view('admin/edit-user',compact('user'));
     }
 
     public function deleteUser($id){
         try {
-            ManageUsers::where('id',$id)->delete();
+            User::where('id',$id)->delete();
             return redirect('/admin/usermanage')->with('success','User Deleted successfully!');
         } catch (\Exception $e) {
             return redirect('/admin/usermanage')->with('fail',$e->getMessage());

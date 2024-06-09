@@ -7,12 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Summon extends Model
 {
-    protected $table = "summon";
-    protected $primaryKey = "summonID";
+    use HasFactory;
+
+    protected $table = 'summons';
+
+    protected $primaryKey = 'summon_id';
+
+    public $timestamps = false;
     protected $fillable = [
-        'summonCategory', 
+        'id', 
+        'summonCategory',
         'summonAmount',
         'demeritPoint',
     ];
-    use HasFactory;
+
+    
 }

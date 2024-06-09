@@ -27,7 +27,7 @@ class ParkingController extends Controller
         ]);
         try {
              // register user here
-            $new_parking = new Parking();
+            $new_parking = new Parking;
             $new_parking->location = $request->location;
             $new_parking->created_at = $request->created_at;
             $new_parking->updated_at = $request->updated_at;

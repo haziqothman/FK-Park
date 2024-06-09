@@ -44,32 +44,38 @@ require __DIR__.'/auth.php';
 route::get('admin.dashboard', [HomeController::class,'index'])->middleware(['auth', 'admin']);
 
 
-Route::get('admin/parkingmanage', function () {
-    return view('admin/parkingmanage');
+Route::get('admin.parkingmanage', function () {
+    return view('admin.parkingmanage');
 })->middleware(['auth', 'admin'])->name('parkingmanage');
 
-Route::get('admin/usermanage', function () {
-    return view('admin/usermanage');
+Route::get('admin.usermanage', function () {
+    return view('admin.usermanage');
 })->middleware(['auth', 'admin'])->name('usermanage');
 
-Route::get('admin/summonmanage', function () {
-    return view('admin/summonmanage');
+Route::get('admin.summonmanage', function () {
+    return view('admin.summonmanage');
 })->middleware(['auth', 'admin'])->name('summonmanage');
-Route::get('admin/dashboard', function () {
-    return view('admin/dashboard');
+
+Route::get('admin.dashboard', function () {
+    return view('admin.dashboard');
 })->middleware(['auth', 'admin'])->name('admin.dashboard');
 
-// Users
-Route::get('/usermanage', [UserController::class, 'loadAllUsers']);
-Route::get('/add/user', [UserController::class, 'loadAddUserForm']);
-Route::post('/add/user', [UserController::class, 'AddUser'])->name('AddUser');
+// Summon
+Route::get('/summonmanage', [SummonController::class, 'list']);
+Route::get('admin/add-summon', [SummonController::class, 'add']);
+Route::post('admin/add-summon', [SummonController::class, 'insert'])->name('add-summon');
+//Route::get('admin/edit-user/{id}', [UserController::class, 'edit']);
+//Route::post('admin/edit-user/{id}', [UserController::class, 'update']);
+//Route::get('admin/delete-user/{id}', [UserController::class, 'delete']);
 
-//Summon
-Route::get('/summonmanage', [SummonController::class, 'loadAllSummon']);
-Route::get('/add/summon', [SummonController::class, 'loadAddSummonForm']);
-Route::post('/add/summon', [SummonController::class, 'AddSummon'])->name('AddSummon');
+// Users
+Route::get('admin/usermanage', [UserController::class, 'list']);
+Route::get('admin/add-user', [UserController::class, 'add']);
+Route::post('admin/add-user', [UserController::class, 'insert'])->name('add-user');
+//Route::get('admin/edit-user/{id}', [UserController::class, 'edit']);
+//Route::post('admin/edit-user/{id}', [UserController::class, 'update']);
+//Route::get('admin/delete-user/{id}', [UserController::class, 'delete']);
+
 
 //Parking
 Route::get('/parkingmanage', [ParkingController::class, 'loadAllParking']);
-Route::get('/add/parking', [ParkingController::class, 'loadAddParkingForm']);
-Route::post('/add/parking', [ParkingController::class, 'AddParking'])->name('AddParking');

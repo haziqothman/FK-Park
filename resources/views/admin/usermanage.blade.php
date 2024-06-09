@@ -21,19 +21,33 @@
 
                     @endif
                     <div class="flex items-center justify-end mt-4">
-                        <x-primary-button><a href="/add/user" class=" btn-sm float-end">
+                        <x-primary-button><a href="{{url('admin/add-user')}}" class=" btn-sm float-end">
                                 {{ __('Add User') }}
                             </a></x-primary-button>
                     </div>
-                    <table class="border-collapse border border-slate-500 table-fixed">
+                    <br>
+                    <table class="border-collapse border border-slate-500 table-fixed" style="width:100%">
                         <thead>
-                            <th>No</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
+                            <tr>
+                                <th class="border-collapse border border-slate-500 table-fixed">ID</th>
+                                <th class="border-collapse border border-slate-500 table-fixed">Username</th>
+                                <th class="border-collapse border border-slate-500 table-fixed">Email</th>
+                                <th class="border-collapse border border-slate-500 table-fixed">Role</th>
+                                <th class="border-collapse border border-slate-500 table-fixed">Summon Amount</th>
+                                <th class="border-collapse border border-slate-500 table-fixed">Action</th>
+                            </tr>
                         </thead>
                         <tbody>
-                            
+                        @foreach ($getRecord as $value)
+                            <tr>
+                                <th scope="row">{{ $value->id }}</th>
+                                <td>{{ $value->name }}</td>
+                                <td>{{ $value->email }}</td>
+                                <td>{{ $value->userType }}</td>
+                                <td>{{ $value->summonAmount }}</td>
+                                <td>Action</td>
+                            </tr>
+                        @endforeach                  
                         </tbody>
                     </table>
                 </div>

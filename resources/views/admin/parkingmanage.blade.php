@@ -25,18 +25,19 @@
                                 {{ __('Add Parking') }}
                             </a></x-primary-button>
                     </div>
-                    <table class="border-collapse border border-slate-500 table-fixed">
+                    <br>
+                    <table class="border-collapse border border-slate-500 table-fixed" style="width:100%">
                         <thead class="border-collapse border border-slate-500 table-fixed">
-                            <th>No</th>
-                            <th>Parking Location</th>
-                            <th>Created At</th>
-                            <th>Updated At</th>
+                            <th class="border-collapse border border-slate-500 table-fixed">No</th>
+                            <th class="border-collapse border border-slate-500 table-fixed">Parking Location</th>
+                            <th class="border-collapse border border-slate-500 table-fixed">Created At</th>
+                            <th class="border-collapse border border-slate-500 table-fixed">Updated At</th>
                         </thead>
                         <tbody>
-                            <td>1</td>
-                            <td>Parking A</td>
-                            <td>11.55 am</td>
-                            <td>12.05 am</td>
+                            <td class="border-collapse border border-slate-500 table-fixed">1</td>
+                            <td class="border-collapse border border-slate-500 table-fixed">Parking A</td>
+                            <td class="border-collapse border border-slate-500 table-fixed">11.55 am</td>
+                            <td class="border-collapse border border-slate-500 table-fixed">12.05 am</td>
                         </tbody>
                     </table>
                 </div>
