@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/parking-spaces', [ParkingSpaceController::class, 'index'])->name('parking-spaces.index');
 
     Route::get('/qrcode/create', [QRCodeController::class, 'create'])->name('qrcode.create');
-    Route::post('/confirm', [QRCodeController::class, 'confirm'])->name('qrcode.confirm');
+    Route::post('confirm', [QRCodeController::class, 'confirm'])->name('qrcode.confirm');
     Route::get('/qrcode/index', [QRCodeController::class, 'index'])->name('qrcode.index');
     Route::get('/qrcode/form', [QRCodeController::class, 'form'])->name('qrcode.form');
     Route::post('/qrcode/store', [QRCodeController::class, 'store'])->name('qrcode.store');
@@ -65,5 +65,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-

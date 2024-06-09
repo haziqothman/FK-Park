@@ -38,10 +38,9 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $booking->vehicle->plate_number }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $booking->parkingSpace->location }} ({{ $booking->parkingSpace->area }})</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $booking->start_time }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $booking->end_time }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $booking->booking_status }}</td>
-
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $booking->startTime }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $booking->endTime }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $booking->bookingStatus }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <a href="{{ route('bookings.show', $booking) }}" class="text-indigo-600 hover:text-indigo-900">View More</a>
                                     <a href="{{ route('bookings.edit', $booking) }}" class="text-blue-600 hover:text-blue-700 ml-2"style="color: blue;">Edit</a>

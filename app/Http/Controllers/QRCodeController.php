@@ -32,9 +32,8 @@ public function index()
 
     public function store(Request $request)
     {
-        // Validate the form data
         $validatedData = $request->validate([
-            'plate_number' => 'required|string|unique:vehicles,plate_number',            
+            'plate_number' => 'required|string|unique:vehicles,plate_number',
             'model' => 'required|string',
             'color' => 'required|string',
             'vehicle_type' => 'required|string',
@@ -42,9 +41,8 @@ public function index()
             'end_time' => 'required|date|after:start_time',
             'parking_space_id' => 'required|exists:parking_spaces,id',
         ]);
-    
+
         try {
-            // Attempt to create a new vehicle
             $vehicle = Vehicle::create([
                 'user_id' => auth()->check() ? auth()->id() : null,
                 'plate_number' => $validatedData['plate_number'],
@@ -54,7 +52,7 @@ public function index()
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-    
+
             $booking = new Booking();
             $booking->userID = auth()->check() ? auth()->id() : null;
             $booking->vehicleID = $vehicle->id;
@@ -63,27 +61,33 @@ public function index()
             $booking->endTime = $validatedData['end_time'];
             $booking->bookingStatus = 'successful(guest)';
             $booking->save();
-    
-            // Set the success message
+
+            session([
+                'booking_details' => [
+                    'userID' => auth()->id(),
+                    'vehicleID' => $vehicle->id,
+                    'spaceID' => $booking->spaceID,
+                    'startTime' => $booking->startTime,
+                    'endTime' => $booking->endTime,
+                    'bookingStatus' => $booking->bookingStatus,
+                ]
+            ]);
+
             $message = 'Booking created successfully!';
-        } catch (QueryException $e) {
-            // Log the exception message for debugging
+        } catch (\Illuminate\Database\QueryException $e) {
             \Log::error('Database error: ' . $e->getMessage());
-    
-            // Check if the exception is a duplicate entry error
+
             if ($e->errorInfo[1] == 1062) {
-                // If it's a duplicate entry error, set the error message
                 $message = 'The plate number already exists. Please enter a different plate number.';
             } else {
-                // If it's a different database error, set a generic error message
                 $message = 'An unexpected error occurred. Please try again later.';
             }
+
+            return redirect()->route('qrcode.create')->with('error', $message);
         }
-    
-        // Redirect the user with the appropriate message
-        return redirect()->route('qrcode.confirm')->with(isset($e) ? 'error' : 'success', $message);
+
+        return redirect()->route('qrcode.confirm')->with('success', $message);
     }
-    
 
     
 

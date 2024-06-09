@@ -12,12 +12,15 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h3 class="text-lg font-semibold mb-4">Booking Details</h3>
                     <ul>
-                        <li><strong>Booking ID:</strong> {{ $booking->id }}</li>
-                        <li><strong>Vehicle:</strong> {{ $booking->vehicle->plate_number }}</li>
+                        <li><strong>Booking ID:</strong> {{ $booking->bookingID }}</li>
+                        <li><strong>Vehicle plate:</strong> {{ $booking->vehicle->plate_number }}</li>
+                        <li><strong>Vehicle type:</strong> {{ $booking->vehicle->vehicle_type }}</li>
+                        <li><strong>model:</strong> {{ $booking->vehicle->model }}</li>
+                        <li><strong>color:</strong> {{ $booking->vehicle->color }}</li>
                         <li><strong>Parking Space:</strong> {{ $booking->parkingSpace->location }} ({{ $booking->parkingSpace->area }})</li>
-                        <li><strong>Start Time:</strong> {{ $booking->start_time }}</li>
-                        <li><strong>End Time:</strong> {{ $booking->end_time }}</li>
-                        <li><strong>Booking Status:</strong> <span style="color: #0AF501;">{{ $booking->booking_status }}</span></li>
+                        <li><strong>Start Time:</strong> {{ $booking->startTime }}</li>
+                        <li><strong>End Time:</strong> {{ $booking->endTime }}</li>
+                        <li><strong>Booking Status:</strong> <span style="color: #0AF501;">{{ $booking->bookingStatus }}</span></li>
                     </ul>
                     <div id="qr-code" style="display: none;" class="mt-6 flex justify-center">
                         {!! $qrCode !!}
