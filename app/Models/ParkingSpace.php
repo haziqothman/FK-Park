@@ -14,6 +14,11 @@ class ParkingSpace extends Model
         'location',
         'area',
     ];
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'spaceID');
+    }
 }
 
 

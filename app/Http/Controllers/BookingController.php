@@ -172,5 +172,4 @@ public function update(Request $request, $id)
 
 //     return response()->json($availableSpaces);
 //     }
-
 }
