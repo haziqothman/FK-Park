@@ -39,16 +39,7 @@
             </header>
         @endif
 
-<<<<<<< HEAD
-            <!-- Page Content -->
-            <main>
-                {{ $slot ?? '' }}
-                @yield('content')
-            </main>
-        </div>
-    </body>
-</html>
-=======
+
         <!-- Page Content -->
         <main>
             {{ $slot }}
@@ -57,4 +48,3 @@
 </body>
 
 </html>
->>>>>>> syakir

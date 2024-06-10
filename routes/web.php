@@ -8,13 +8,13 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ParkingStatusController;
 use App\Http\Controllers\QRCodeController;
 use App\Http\Controllers\HomeController;
-<<<<<<< HEAD
+
 use Illuminate\Support\Facades\Route;
 
-=======
+
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SummonController;
->>>>>>> syakir
+
 
 Route::resource('parking-spaces', ParkingSpaceController::class);
 Route::resource('parking-statuses', ParkingStatusController::class);
@@ -78,9 +78,8 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-<<<<<<< HEAD
+
 route::get('admin.dashboard', [HomeController::class,'index'])->middleware(['auth', 'admin']);
-=======
 
 route::get('admin.dashboard', [HomeController::class,'index'])->middleware(['auth', 'admin']);
 
@@ -120,4 +119,4 @@ Route::post('admin/add-user', [UserController::class, 'insert'])->name('add-user
 
 //Parking
 Route::get('/parkingmanage', [ParkingController::class, 'loadAllParking']);
->>>>>>> syakir
+

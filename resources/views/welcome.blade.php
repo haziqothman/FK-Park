@@ -22,11 +22,9 @@
                 <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
                     <header class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
                         <div class="flex lg:justify-center lg:col-start-2">
-<<<<<<< HEAD
+
                         <img src="{{asset('image/umpsa.png') }}" width="80px" alt="app-logo">
-=======
-                        <img src="{{asset('logo/umpsa.png') }}" width="80px" alt="app-logo">
->>>>>>> syakir
+
                         </div>
                         @if (Route::has('login'))
                             <nav class="-mx-3 flex flex-1 justify-end">
@@ -67,11 +65,9 @@
                             >
                                 <div id="screenshot-container" class="relative flex w-full flex-1 items-stretch">
                                     <img
-<<<<<<< HEAD
                                         src="image/FKOM.jpg"
-=======
-                                        src="logo/FKOM.jpg"
->>>>>>> syakir
+
+                                      
                                         alt="fkom-banner"
                                         class="aspect-video h-full w-full flex-1 rounded-[10px] object-top object-cover drop-shadow-[0px_4px_34px_rgba(0,0,0,0.06)] dark:hidden"
                                         onerror="
@@ -82,11 +78,7 @@
                                         "
                                     />
                                     <img
-<<<<<<< HEAD
                                         src="image/FKOM.jpg"
-=======
-                                        src="logo/FKOM.jpg"
->>>>>>> syakir
                                         alt="Laravel documentation screenshot"
                                         class="hidden aspect-video h-full w-full flex-1 rounded-[10px] object-top object-cover drop-shadow-[0px_4px_34px_rgba(0,0,0,0.25)] dark:block"
                                     />
