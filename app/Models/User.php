@@ -19,6 +19,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'userType',
         'password',
     ];
 
@@ -43,5 +44,16 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+    protected $table = "users";
+    protected $primaryKey = "id";
+
+    static public function getRecord()
+    {
+        return User::select('users.*', 'summons.summonAmount as summonAmount')
+            ->join('summons', 'summons.id', '=', 'users.id')
+            ->orderBy('users.id', 'desc')->get();
     }
 }

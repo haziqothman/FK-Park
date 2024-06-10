@@ -23,9 +23,9 @@
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
         <div>
-            <x-input-label for="role" :value="__('Role')" />
-            <x-text-input id="role" name="role" type="text" class="mt-1 block w-full" :value="old('role', $user->role)" autocomplete="role" />
-            <x-input-error class="mt-2" :messages="$errors->get('role')" />
+            <x-input-label for="userType" :value="__('Role')" />
+            <x-text-input id="userType" name="userType" type="text" class="mt-1 block w-full" :value="old('userType', $user->userType)" aria-disabled="true" />
+            <x-input-error class="mt-2" :messages="$errors->get('userType')" />
         </div>
 
         <div>
