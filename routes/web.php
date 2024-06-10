@@ -6,6 +6,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ParkingStatusController;
 use App\Http\Controllers\QRCodeController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -42,6 +43,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/qrcode/index', [QRCodeController::class, 'index'])->name('qrcode.index');
     Route::get('/qrcode/form', [QRCodeController::class, 'form'])->name('qrcode.form');
     Route::post('/qrcode/store', [QRCodeController::class, 'store'])->name('qrcode.store');
+    Route::get('/qrcode/scan', [QRCodeController::class, 'scan'])->name('qrcode.scan');
+    Route::get('/generate-qrcode', [QRCodeController::class, 'generate'])->name('generate.qrcode');
     Route::resource('qrcode', QRCodeController::class);
 
 });
@@ -58,6 +61,10 @@ Route::get('/booking', function () {
     return view('booking');
 })->middleware(['auth', 'verified'])->name('booking');
 
+Route::get('admin.dashboard', function () {
+    return view('admin.dashboard');
+})->middleware(['auth', 'admin'])->name('admin.dashboard');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -65,3 +72,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+route::get('admin.dashboard', [HomeController::class,'index'])->middleware(['auth', 'admin']);

@@ -138,4 +138,3 @@ class VehicleController extends Controller
         return redirect()->route('vehicles.index')->with('success', 'Vehicle deleted successfully.');
     }
 }
-

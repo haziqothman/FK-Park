@@ -7,6 +7,8 @@ use App\Models\Booking;
 use App\Models\Vehicle;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ParkingSpace;
+use Illuminate\Support\Facades\DB;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class QRCodeController extends Controller
 {
@@ -22,6 +24,17 @@ public function index()
     
     }
 
+    public function scan()
+    {
+        // Generate the URL to the qrcode.create route
+        $url = route('qrcode.create');
+        
+        // Generate the QR code
+        $qrCode = QrCode::size(300)->generate($url);
+
+        return view('qrcode.scan', compact('qrCode'));
+    }
+
     public function create()
     {
         $vehicles = Vehicle::where('user_id', Auth::id())->get();
@@ -33,7 +46,7 @@ public function index()
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'plate_number' => 'required|string|unique:vehicles,plate_number',
+            'plate_number' => 'required|string',
             'model' => 'required|string',
             'color' => 'required|string',
             'vehicle_type' => 'required|string',
@@ -41,27 +54,49 @@ public function index()
             'end_time' => 'required|date|after:start_time',
             'parking_space_id' => 'required|exists:parking_spaces,id',
         ]);
-
+    
+        DB::beginTransaction();
+    
         try {
-            $vehicle = Vehicle::create([
-                'user_id' => auth()->check() ? auth()->id() : null,
-                'plate_number' => $validatedData['plate_number'],
-                'model' => $validatedData['model'],
-                'color' => $validatedData['color'],
-                'vehicle_type' => $validatedData['vehicle_type'],
-                'created_at' => now(),
-                'updated_at' => now(),
+            // Check if a vehicle with the same plate number already exists
+            $vehicle = Vehicle::where('plate_number', $validatedData['plate_number'])->first();
+    
+            if (!$vehicle) {
+                // If the vehicle does not exist, create a new one
+                $vehicle = Vehicle::create([
+                    'user_id' => auth()->check() ? auth()->id() : null,
+                    'plate_number' => $validatedData['plate_number'],
+                    'model' => $validatedData['model'],
+                    'color' => $validatedData['color'],
+                    'vehicle_type' => $validatedData['vehicle_type'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+    
+            // Check if a reservation already exists for this vehicle in the same time slot and parking space
+            $existingBooking = Booking::where('vehicleID', $vehicle->id)
+                ->where('spaceID', $validatedData['parking_space_id'])
+                ->where('startTime', $validatedData['start_time'])
+                ->where('endTime', $validatedData['end_time'])
+                ->first();
+    
+            if ($existingBooking) {
+                DB::rollBack();
+                return redirect()->route('qrcode.create')->with('error', 'This reservation already exists.');
+            }
+    
+            // Create a new booking
+            $booking = Booking::create([
+                'userID' => auth()->check() ? auth()->id() : null,
+                'vehicleID' => $vehicle->id,
+                'spaceID' => $validatedData['parking_space_id'],
+                'startTime' => $validatedData['start_time'],
+                'endTime' => $validatedData['end_time'],
+                'bookingStatus' => 'successful(guest)',
             ]);
-
-            $booking = new Booking();
-            $booking->userID = auth()->check() ? auth()->id() : null;
-            $booking->vehicleID = $vehicle->id;
-            $booking->spaceID = $validatedData['parking_space_id'];
-            $booking->startTime = $validatedData['start_time'];
-            $booking->endTime = $validatedData['end_time'];
-            $booking->bookingStatus = 'successful(guest)';
-            $booking->save();
-
+    
+            // Store booking details in the session
             session([
                 'booking_details' => [
                     'userID' => auth()->id(),
@@ -72,24 +107,23 @@ public function index()
                     'bookingStatus' => $booking->bookingStatus,
                 ]
             ]);
-
-            $message = 'Booking created successfully!';
+    
+            DB::commit();
+    
+            return redirect()->route('qrcode.confirm')->with('success', 'Booking created successfully!');
         } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
             \Log::error('Database error: ' . $e->getMessage());
-
+    
             if ($e->errorInfo[1] == 1062) {
                 $message = 'The plate number already exists. Please enter a different plate number.';
             } else {
                 $message = 'An unexpected error occurred. Please try again later.';
             }
-
+    
             return redirect()->route('qrcode.create')->with('error', $message);
         }
-
-        return redirect()->route('qrcode.confirm')->with('success', $message);
     }
-
-    
 
     public function confirm()
     {

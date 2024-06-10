@@ -30,7 +30,7 @@
                     <x-nav-link :href="route('parking-spaces.index')" :active="request()->routeIs('parking-spaces.index')">
                         {{ __('Manage Parking Spaces') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('qrcode.create')" :active="request()->routeIs('qrcode.create')">
+                    <x-nav-link :href="route('qrcode.scan')" :active="request()->routeIs('qrcode.scan')">
                         {{ __('Scan QR Code') }}
                     </x-nav-link>
 
